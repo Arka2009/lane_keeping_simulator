@@ -1,0 +1,45 @@
+<!-- Edit This file -->
+<launch>
+<param name="use_sim_time" value="true"/>
+
+<node name="map_server" pkg="map_server" type="map_server" args="$(find arka_ryu_project)/maps/small/small.yaml">
+  <param name="frame_id" value="/map" />
+</node>
+
+<node name="stageros" pkg="stage_ros" type="stageros" args="-g $(find arka_ryu_project)/maps/small/small.world" respawn="false" output="screen">
+  <param name="base_watchdog_timeout" value="0.2"/>
+</node>
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find arka_ryu_project)/dump/highway_simu.rviz"/>
+
+<node name="fake_localization_0" pkg="fake_localization" type="fake_localization" respawn="false" ns="/robot_0">
+    <param name="odom_frame_id" value="/robot_0/odom"/>
+    <param name="base_frame_id" value="/robot_0/base_link"/>
+</node>
+
+<group ns="robot_0">
+    <include file="$(find arka_ryu_project)/car_model/display_redCar.launch"/>
+    <param name="tf_prefix" value="robot_0" />
+</group>
+
+<node name="fake_localization_1" pkg="fake_localization" type="fake_localization" respawn="false" ns="/robot_1">
+    <param name="odom_frame_id" value="/robot_1/odom"/>
+    <param name="base_frame_id" value="/robot_1/base_link"/>
+</node>
+
+<group ns="robot_1">
+    <include file="$(find arka_ryu_project)/car_model/display_greenCar.launch"/>
+    <param name="tf_prefix" value="robot_1" />
+</group>
+
+<node pkg="arka_ryu_project" type="front_car.py" name="front_car" respawn="false" output="screen" >
+<param name="hz" type="int" value="10" />
+</node>
+
+<node pkg="arka_ryu_project" type="teleop.py" name="teleop_0" respawn="false" output="screen" ns="/robot_0" >
+<param name="hz" type="int" value="20" />
+<param name="acc" type="double" value="1" />
+<param name="yaw" type="double" value="0.25" />
+</node>
+
+</launch>

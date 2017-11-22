@@ -1,0 +1,85 @@
+# set the resolution of the underlying raytrace model in meters
+resolution 	0.5
+interval_sim 	100  # simulation timestep in milliseconds
+size [1488 60]
+
+define block model
+(
+	size [4.000 1.800 1.000]
+	gui_nose 0
+)
+
+define topurg ranger                                                            
+(                                                                               
+	sensor(                                                                	    
+		range [0.0 80.0]                                                                
+		fov 180                                                                         
+		samples 360                                                                     
+	)                                                                               
+
+	# generic model properties                                                      	
+	color "black"                                                                   
+	size [ 0.050 0.050 0.100 ]                                                      
+)                                                                               
+
+
+# Red Car
+define gc1 position
+(
+	size [4.000 1.800 1.000]
+	origin [0.792 0.000 0.000 0.000]
+	gui_nose 1
+	drive "car"
+	localization "gps"
+	topurg(pose [1.985 0.000 -0.500 0.000])
+	velocity_bounds [-10000 10000 -1 1 -1 1 -90 90 ]	
+	acceleration_bounds [-10000 10000 -1 1 -1 1 -90 90]
+)
+
+# Green Car
+define gc2 position
+(
+	size [4.000 1.800 1.000]
+	origin [0.792 0.000 0.000 0.000]
+	gui_nose 1
+	drive "car"
+	localization "gps"
+	topurg(pose [1.985 0.000 -0.500 0.000])
+	velocity_bounds [-10000 10000 -1 1 -1 1 -90 90 ]	
+	acceleration_bounds [-10000 10000 -1 1 -1 1 -90 90]
+)
+
+define floorplan model
+(
+	color "gray30"
+	boundary 1
+	gui_nose 0
+	gui_grid 1
+	gui_outline 0
+	gripper_return 0
+	fiducial_return 0
+	laser_return 1
+)
+
+window
+( 
+	size [ 2972 121 ] 
+	center [742 60.5] 
+	rotate [ 0.000 -407.500 ]
+	scale 0.5
+)
+
+# load an environment bitmap
+floorplan
+( 
+	name "willow"
+	bitmap "lane2.png"
+	size [1486 60.5 1.000]
+	pose [742 30 0.000 0.000]
+)
+
+# throw in the autonomous car
+gc1( pose [10 30 0.0 0.0] name "gc1" color "red")
+
+# throw in the agent cars
+gc2( pose [100 30 0.0 0.0] name "gc21" color "green")
